@@ -103,6 +103,7 @@ class GATTToolBackend(BLEBackend):
         self.disconnect(self._connected_device)
         if self._running.is_set():
             #log.info('Stopping')
+			pass
         self._running.clear()
 
         if self._receiver:

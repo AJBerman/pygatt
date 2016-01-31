@@ -84,7 +84,7 @@ class GATTToolBackend(BLEBackend):
             self._hci_device,
             '-I'
         ]))
-        log.debug('gatttool_cmd=%s', gatttool_cmd)
+        #log.debug('gatttool_cmd=%s', gatttool_cmd)
         self._con = pexpect.spawn(gatttool_cmd, logfile=self._gatttool_logfile)
         # Wait for response
         self._con.expect(r'\[LE\]>', timeout=1)
@@ -102,7 +102,7 @@ class GATTToolBackend(BLEBackend):
         """
         self.disconnect(self._connected_device)
         if self._running.is_set():
-            log.info('Stopping')
+            #log.info('Stopping')
         self._running.clear()
 
         if self._receiver:
@@ -130,7 +130,7 @@ class GATTToolBackend(BLEBackend):
         terminate cleanly, and may leave your Bluetooth adapter in a bad state.
         """
 
-        cmd = 'hcitool lescan'
+        cmd = 'hcitool lescan > /dev/null'
         if run_as_root:
             cmd = 'sudo %s' % cmd
 
@@ -175,7 +175,7 @@ class GATTToolBackend(BLEBackend):
 
     def connect(self, address, timeout=DEFAULT_CONNECT_TIMEOUT_S,
                 address_type='public'):
-        log.info('Connecting with timeout=%s', timeout)
+        #log.info('Connecting with timeout=%s', timeout)
         self._con.sendline('sec-level low')
         self._address = address
         try:
@@ -296,7 +296,8 @@ class GATTToolBackend(BLEBackend):
                         self._handle_notification_string(self._con.after)
                     elif matched_pattern_index == 3:
                         if self._running.is_set():
-                            log.info("Disconnected")
+                            #log.info("Disconnected")
+							pass
                 except pexpect.TIMEOUT:
                     raise NotificationTimeout(
                         "Timed out waiting for a notification")
@@ -326,7 +327,7 @@ class GATTToolBackend(BLEBackend):
 
             cmd = 'char-write-%s 0x%02x %s' % (cmd, handle, hexstring)
 
-            log.debug('Sending cmd=%s', cmd)
+            #log.debug('Sending cmd=%s', cmd)
             self._con.sendline(cmd)
 
             if wait_for_response:
@@ -336,7 +337,7 @@ class GATTToolBackend(BLEBackend):
                     log.error("No response received", exc_info=True)
                     raise
 
-            log.info('Sent cmd=%s', cmd)
+            #log.info('Sent cmd=%s', cmd)
 
     @at_most_one_device
     def char_read(self, uuid):
@@ -359,7 +360,7 @@ class GATTToolBackend(BLEBackend):
         """
         Run a background thread to listen for notifications.
         """
-        log.info('Running...')
+        #log.info('Running...')
         while self._running.is_set():
             try:
                 self._expect("fooooooo", timeout=.1)
@@ -371,7 +372,7 @@ class GATTToolBackend(BLEBackend):
             # blocking out the others. worst case is 1 second delay for async
             # not received as a part of another request
             time.sleep(.01)
-        log.info("Listener thread finished")
+        #log.info("Listener thread finished")
 
     def reset(self):
         subprocess.Popen(["sudo", "systemctl", "restart", "bluetooth"]).wait()

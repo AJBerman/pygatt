@@ -101,9 +101,8 @@ class GATTToolBackend(BLEBackend):
         disconnect.
         """
         self.disconnect(self._connected_device)
-        if self._running.is_set():
+        #if self._running.is_set():
             #log.info('Stopping')
-			pass
         self._running.clear()
 
         if self._receiver:
@@ -295,10 +294,9 @@ class GATTToolBackend(BLEBackend):
                         break
                     elif matched_pattern_index in [1, 2]:
                         self._handle_notification_string(self._con.after)
-                    elif matched_pattern_index == 3:
-                        if self._running.is_set():
+                    #elif matched_pattern_index == 3:
+                        #if self._running.is_set():
                             #log.info("Disconnected")
-							pass
                 except pexpect.TIMEOUT:
                     raise NotificationTimeout(
                         "Timed out waiting for a notification")
